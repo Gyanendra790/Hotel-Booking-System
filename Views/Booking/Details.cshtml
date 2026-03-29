@@ -1,0 +1,185 @@
+@model Booking
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<div class="page-header">
+    <h4><i class="bi bi-calendar-check me-2 text-primary"></i>Booking — @Model.BookingReference</h4>
+    <div class="page-header-actions">
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+        @if (Model.Status == BookingStatus.Pending || Model.Status == BookingStatus.Confirmed)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.BookingId" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+        }
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Left: Details -->
+    <div class="col-lg-8">
+        <!-- Guest Card -->
+        <div class="form-section mb-3">
+            <div class="form-section-header"><i class="bi bi-person-circle text-primary"></i> Guest Information</div>
+            <div class="form-section-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="text-muted small">Full Name</div>
+                        <div class="fw-600">@Model.Guest.FullName</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Email</div>
+                        <div class="fw-600">@Model.Guest.Email</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Phone</div>
+                        <div class="fw-600">@(Model.Guest.Phone ?? "—")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Country</div>
+                        <div class="fw-600">@(Model.Guest.Country ?? "—")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Card -->
+        <div class="form-section mb-3">
+            <div class="form-section-header"><i class="bi bi-door-open text-primary"></i> Room & Stay Details</div>
+            <div class="form-section-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="text-muted small">Room</div>
+                        <div class="fw-800 fs-4 text-primary">@Model.Room.RoomNumber</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Room Type</div>
+                        <span class="badge-status badge-@Model.Room.RoomType.ToString().ToLower()">@Model.Room.RoomType</span>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Check-in</div>
+                        <div class="fw-600">@Model.CheckInDate.ToString("MMM dd, yyyy")</div>
+                        @if (Model.ActualCheckIn.HasValue)
+                        {
+                            <div class="small text-success">Actual: @Model.ActualCheckIn.Value.ToString("HH:mm")</div>
+                        }
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Check-out</div>
+                        <div class="fw-600">@Model.CheckOutDate.ToString("MMM dd, yyyy")</div>
+                        @if (Model.ActualCheckOut.HasValue)
+                        {
+                            <div class="small text-muted">Actual: @Model.ActualCheckOut.Value.ToString("HH:mm")</div>
+                        }
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Duration</div>
+                        <div class="fw-600">@Model.NumberOfNights night(s)</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Guests</div>
+                        <div class="fw-600">@Model.NumberOfGuests</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Special Requests</div>
+                        <div class="fw-600">@(Model.SpecialRequests ?? "None")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Status + Fare + Actions -->
+    <div class="col-lg-4">
+        <!-- Status -->
+        <div class="form-section mb-3">
+            <div class="form-section-header"><i class="bi bi-info-circle text-primary"></i> Status</div>
+            <div class="form-section-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Booking Status</span>
+                    <span class="badge-status badge-@Model.Status.ToString().ToLower()">@Model.Status</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Payment Status</span>
+                    <span class="badge-status badge-@Model.PaymentStatus.ToString().ToLower()">@Model.PaymentStatus</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted small">Created</span>
+                    <span class="small">@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fare -->
+        <div class="form-section mb-3">
+            <div class="form-section-header"><i class="bi bi-receipt text-primary"></i> Fare Breakdown</div>
+            <div class="form-section-body">
+                <div class="fare-summary">
+                    <div class="fare-row"><span>Room Fare</span><span class="fw-600">$@Model.RoomFare.ToString("N2")</span></div>
+                    <div class="fare-row"><span>Tax</span><span class="fw-600">$@Model.TaxAmount.ToString("N2")</span></div>
+                    @if (Model.ExtraCharges > 0)
+                    {
+                        <div class="fare-row"><span>Extra Charges</span><span class="fw-600">$@Model.ExtraCharges.ToString("N2")</span></div>
+                    }
+                    @if (Model.Discount > 0)
+                    {
+                        <div class="fare-row text-success"><span>Discount</span><span class="fw-600">-$@Model.Discount.ToString("N2")</span></div>
+                    }
+                    <div class="fare-row total"><span>Total</span><span>$@Model.TotalAmount.ToString("N2")</span></div>
+                    <div class="fare-row"><span>Amount Paid</span><span class="fw-600 text-success">$@Model.AmountPaid.ToString("N2")</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-section">
+            <div class="form-section-header"><i class="bi bi-lightning text-warning"></i> Actions</div>
+            <div class="form-section-body d-grid gap-2">
+                @if (Model.Status == BookingStatus.Confirmed || Model.Status == BookingStatus.Pending)
+                {
+                    <form asp-action="CheckIn" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.BookingId" />
+                        <button class="btn btn-success w-100"><i class="bi bi-box-arrow-in-right me-2"></i>Check In</button>
+                    </form>
+                }
+                @if (Model.Status == BookingStatus.CheckedIn)
+                {
+                    <form asp-action="CheckOut" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.BookingId" />
+                        <button class="btn btn-warning w-100"><i class="bi bi-box-arrow-right me-2"></i>Check Out & Invoice</button>
+                    </form>
+                }
+                @if (Model.Invoice != null)
+                {
+                    <a asp-controller="Invoice" asp-action="Details" asp-route-id="@Model.Invoice.InvoiceId"
+                       class="btn btn-outline-primary w-100"><i class="bi bi-receipt me-2"></i>View Invoice</a>
+                }
+                else if (Model.Status == BookingStatus.CheckedOut || Model.Status == BookingStatus.CheckedIn)
+                {
+                    <form asp-controller="Invoice" asp-action="Generate" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="bookingId" value="@Model.BookingId" />
+                        <button class="btn btn-outline-success w-100"><i class="bi bi-file-earmark-plus me-2"></i>Generate Invoice</button>
+                    </form>
+                }
+                @if (Model.Status != BookingStatus.Cancelled && Model.Status != BookingStatus.CheckedOut)
+                {
+                    <form asp-action="Cancel" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.BookingId" />
+                        <button class="btn btn-outline-danger w-100" data-confirm="Cancel this booking?"><i class="bi bi-x-circle me-2"></i>Cancel Booking</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('[data-confirm]').forEach(btn => {
+            btn.addEventListener('click', e => { if (!confirm(btn.dataset.confirm)) e.preventDefault(); });
+        });
+    </script>
+}

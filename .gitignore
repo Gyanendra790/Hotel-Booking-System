@@ -1,0 +1,56 @@
+## ── Build outputs ───────────────────────────────────────────────
+bin/
+obj/
+
+## ── User-specific files ────────────────────────────────────────
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## ── Visual Studio ──────────────────────────────────────────────
+.vs/
+.vscode/
+
+## ── Logs ───────────────────────────────────────────────────────
+logs/
+*.log
+
+## ── .NET publish output ────────────────────────────────────────
+publish/
+wwwroot/
+
+## ── Configuration files (local secrets) ────────────────────────
+appsettings.Development.json
+appsettings.Local.json
+
+## ── Secrets (if using user-secrets) ────────────────────────────
+secrets.json
+
+## ── OS files ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+## ── Entity Framework ───────────────────────────────────────────
+Migrations/*Designer.cs
+Migrations/*.Snapshot.cs
+
+## ── Rider / JetBrains ──────────────────────────────────────────
+.idea/
+*.sln.iml
+
+## ── Node (if ever added frontend later) ────────────────────────
+node_modules/
+
+## ── NuGet ──────────────────────────────────────────────────────
+*.nupkg
+*.snupkg
+
+## ── Temporary files ────────────────────────────────────────────
+*.tmp
+*.temp
+
+## ── Environment files ──────────────────────────────────────────
+.env
+.env.local
+.env.*.local

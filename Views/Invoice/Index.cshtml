@@ -1,0 +1,55 @@
+@model IEnumerable<Invoice>
+@{
+    ViewData["Title"] = "Invoices";
+}
+
+<div class="page-header">
+    <h4><i class="bi bi-receipt me-2 text-primary"></i>Invoices</h4>
+</div>
+
+<div class="section-card">
+    <div class="section-card-body">
+        <table class="table-hotel w-100">
+            <thead>
+                <tr>
+                    <th>Invoice #</th><th>Booking Ref</th><th>Guest</th><th>Room</th>
+                    <th>Date</th><th>Grand Total</th><th>Balance Due</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var inv in Model)
+            {
+                <tr>
+                    <td><span class="fw-600 text-primary">@inv.InvoiceNumber</span></td>
+                    <td class="small text-muted">@inv.Booking.BookingReference</td>
+                    <td class="fw-600">@inv.Booking.Guest.FullName</td>
+                    <td>@inv.Booking.Room.RoomNumber</td>
+                    <td class="small">@inv.InvoiceDate.ToString("MM/dd/yyyy")</td>
+                    <td class="fw-700">$@inv.GrandTotal.ToString("N2")</td>
+                    <td class="@(inv.BalanceDue > 0 ? "text-danger fw-600" : "text-success fw-600")">
+                        $@inv.BalanceDue.ToString("N2")
+                    </td>
+                    <td>
+                        @if (inv.IsPaid)
+                        {
+                            <span class="badge-status badge-checkedout"><i class="bi bi-check-circle me-1"></i>Paid</span>
+                        }
+                        else
+                        {
+                            <span class="badge-status badge-pending">Unpaid</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@inv.InvoiceId" class="btn btn-sm btn-outline-primary btn-icon" title="View"><i class="bi bi-eye"></i></a>
+                        <a asp-action="Print" asp-route-id="@inv.InvoiceId" target="_blank" class="btn btn-sm btn-outline-secondary btn-icon ms-1" title="Print"><i class="bi bi-printer"></i></a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="9" class="no-results"><i class="bi bi-receipt d-block mb-2"></i>No invoices generated yet</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

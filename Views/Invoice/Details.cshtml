@@ -1,0 +1,169 @@
+@model InvoiceViewModel
+@{
+    ViewData["Title"] = "Invoice " + Model.Invoice.InvoiceNumber;
+}
+
+<div class="page-header">
+    <h4><i class="bi bi-receipt me-2 text-primary"></i>Invoice — @Model.Invoice.InvoiceNumber</h4>
+    <div class="page-header-actions">
+        <a asp-action="Print" asp-route-id="@Model.Invoice.InvoiceId" target="_blank" class="btn btn-outline-secondary">
+            <i class="bi bi-printer me-1"></i>Print
+        </a>
+        @if (!Model.Invoice.IsPaid)
+        {
+            <form asp-action="MarkPaid" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Invoice.InvoiceId" />
+                <button class="btn btn-success" data-confirm="Mark invoice as paid?">
+                    <i class="bi bi-check-circle me-1"></i>Mark as Paid
+                </button>
+            </form>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    </div>
+</div>
+
+<div class="invoice-container">
+    <!-- Invoice Header -->
+    <div class="invoice-header">
+        <div class="row align-items-center">
+            <div class="col-7">
+                <h3 class="mb-1 fw-800">@Model.HotelName</h3>
+                <div class="small opacity-75">@Model.HotelAddress</div>
+                <div class="small opacity-75">@Model.HotelPhone | @Model.HotelEmail</div>
+            </div>
+            <div class="col-5 text-end">
+                <div class="fw-800" style="font-size:28px">INVOICE</div>
+                <div class="small opacity-75">@Model.Invoice.InvoiceNumber</div>
+                <div class="mt-2">
+                    @if (Model.Invoice.IsPaid)
+                    {
+                        <span class="badge bg-success fs-6">PAID</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark fs-6">UNPAID</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Body -->
+    <div class="invoice-body">
+        <!-- Bill To / Invoice Info -->
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="text-muted small fw-600 text-uppercase mb-2">Bill To</div>
+                <div class="fw-800">@Model.Guest.FullName</div>
+                <div class="small text-muted">@Model.Guest.Email</div>
+                <div class="small text-muted">@(Model.Guest.Phone ?? "")</div>
+                @if (!string.IsNullOrEmpty(Model.Guest.Address))
+                {
+                    <div class="small text-muted">@Model.Guest.Address</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Guest.Country))
+                {
+                    <div class="small text-muted">@Model.Guest.Country</div>
+                }
+            </div>
+            <div class="col-6 text-end">
+                <div class="text-muted small fw-600 text-uppercase mb-2">Invoice Details</div>
+                <table class="ms-auto small">
+                    <tr><td class="text-muted pe-3">Invoice Date:</td><td class="fw-600">@Model.Invoice.InvoiceDate.ToString("MMMM dd, yyyy")</td></tr>
+                    <tr><td class="text-muted pe-3">Due Date:</td><td class="fw-600">@Model.Invoice.DueDate.ToString("MMMM dd, yyyy")</td></tr>
+                    <tr><td class="text-muted pe-3">Booking Ref:</td><td class="fw-600">@Model.Booking.BookingReference</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Stay Details -->
+        <table class="invoice-table mb-4">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th class="text-center">Nights</th>
+                    <th class="text-end">Rate/Night</th>
+                    <th class="text-end">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="fw-600">Room @Model.Room.RoomNumber — @Model.Room.RoomType</div>
+                        <div class="small text-muted">Floor @Model.Room.Floor | @(Model.Room.HasAC ? "AC, " : "")@(Model.Room.HasWiFi ? "WiFi, " : "")@(Model.Room.HasTV ? "TV" : "")</div>
+                    </td>
+                    <td>@Model.Booking.CheckInDate.ToString("MM/dd/yyyy")</td>
+                    <td>@Model.Booking.CheckOutDate.ToString("MM/dd/yyyy")</td>
+                    <td class="text-center">@Model.Booking.NumberOfNights</td>
+                    <td class="text-end">$@Model.Room.PricePerNight.ToString("N2")</td>
+                    <td class="text-end fw-600">$@Model.Invoice.SubTotal.ToString("N2")</td>
+                </tr>
+                @if (Model.Invoice.ExtraCharges > 0)
+                {
+                    <tr>
+                        <td colspan="5">Extra Charges</td>
+                        <td class="text-end fw-600">$@Model.Invoice.ExtraCharges.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="row justify-content-end">
+            <div class="col-md-5">
+                <table class="w-100 small">
+                    <tr class="border-bottom">
+                        <td class="py-2 text-muted">Subtotal</td>
+                        <td class="text-end fw-600">$@Model.Invoice.SubTotal.ToString("N2")</td>
+                    </tr>
+                    <tr class="border-bottom">
+                        <td class="py-2 text-muted">Tax (12%)</td>
+                        <td class="text-end fw-600">$@Model.Invoice.TaxAmount.ToString("N2")</td>
+                    </tr>
+                    @if (Model.Invoice.Discount > 0)
+                    {
+                        <tr class="border-bottom">
+                            <td class="py-2 text-success">Discount</td>
+                            <td class="text-end fw-600 text-success">-$@Model.Invoice.Discount.ToString("N2")</td>
+                        </tr>
+                    }
+                    <tr class="border-bottom">
+                        <td class="py-3 fw-800 fs-6">Grand Total</td>
+                        <td class="text-end fw-800 fs-6 text-primary">$@Model.Invoice.GrandTotal.ToString("N2")</td>
+                    </tr>
+                    <tr class="border-bottom">
+                        <td class="py-2 text-muted">Amount Paid</td>
+                        <td class="text-end fw-600 text-success">$@Model.Invoice.AmountPaid.ToString("N2")</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 fw-700 @(Model.Invoice.BalanceDue > 0 ? "text-danger" : "text-success")">Balance Due</td>
+                        <td class="text-end fw-800 @(Model.Invoice.BalanceDue > 0 ? "text-danger" : "text-success")">$@Model.Invoice.BalanceDue.ToString("N2")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Invoice.Notes))
+        {
+            <div class="mt-4 p-3 bg-light rounded">
+                <div class="fw-600 small mb-1">Notes</div>
+                <div class="small text-muted">@Model.Invoice.Notes</div>
+            </div>
+        }
+
+        <div class="text-center mt-4 small text-muted">
+            Thank you for choosing @Model.HotelName. We hope to see you again!
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('[data-confirm]').forEach(btn => {
+            btn.addEventListener('click', e => { if (!confirm(btn.dataset.confirm)) e.preventDefault(); });
+        });
+    </script>
+}

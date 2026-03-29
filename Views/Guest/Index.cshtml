@@ -1,0 +1,82 @@
+@model IEnumerable<Guest>
+@{
+    ViewData["Title"] = "Guests";
+}
+
+<div class="page-header">
+    <h4><i class="bi bi-people me-2 text-primary"></i>Guests</h4>
+    <div class="page-header-actions">
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-person-plus me-1"></i>Add Guest</a>
+    </div>
+</div>
+
+<div class="section-card mb-3">
+    <div class="section-card-body p-3">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search by name, email or phone…" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i>Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-1">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="section-card">
+    <div class="section-card-body">
+        <table class="table-hotel w-100">
+            <thead>
+                <tr>
+                    <th>#</th><th>Name</th><th>Email</th><th>Phone</th>
+                    <th>Country</th><th>ID Type</th><th>Registered</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var g in Model)
+            {
+                <tr>
+                    <td class="text-muted small">@g.GuestId</td>
+                    <td>
+                        <div class="fw-600">@g.FullName</div>
+                        @if (g.DateOfBirth.HasValue)
+                        {
+                            <div class="text-muted small">DOB: @g.DateOfBirth.Value.ToString("MM/dd/yyyy")</div>
+                        }
+                    </td>
+                    <td>@g.Email</td>
+                    <td>@(g.Phone ?? "—")</td>
+                    <td>@(g.Country ?? "—")</td>
+                    <td><span class="badge-status badge-standard">@g.IdType</span></td>
+                    <td class="small text-muted">@g.CreatedAt.ToString("MM/dd/yyyy")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@g.GuestId" class="btn btn-sm btn-outline-primary btn-icon" title="View"><i class="bi bi-eye"></i></a>
+                        <a asp-action="Edit" asp-route-id="@g.GuestId" class="btn btn-sm btn-outline-secondary btn-icon ms-1" title="Edit"><i class="bi bi-pencil"></i></a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        {
+                            <form asp-action="Delete" method="post" class="d-inline ms-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@g.GuestId" />
+                                <button class="btn btn-sm btn-outline-danger btn-icon" data-confirm="Delete guest @g.FullName?"><i class="bi bi-trash"></i></button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="8" class="no-results"><i class="bi bi-people d-block mb-2"></i>No guests found</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('[data-confirm]').forEach(btn => {
+            btn.addEventListener('click', e => { if (!confirm(btn.dataset.confirm)) e.preventDefault(); });
+        });
+    </script>
+}

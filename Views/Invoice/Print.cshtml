@@ -1,0 +1,128 @@
+@model InvoiceViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Invoice " + Model.Invoice.InvoiceNumber;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Invoice @Model.Invoice.InvoiceNumber</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #fff; color: #1e293b; padding: 30px; }
+        .inv-header { background: #4f46e5; color: #fff; padding: 28px 32px; border-radius: 10px 10px 0 0; }
+        .inv-body { border: 1px solid #e2e8f0; border-top: none; padding: 32px; border-radius: 0 0 10px 10px; }
+        table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; color: #64748b; padding: 10px 14px; border-bottom: 2px solid #e2e8f0; }
+        table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .total-row { font-weight: 800; background: #f0f4ff; }
+        @@media print {
+            body { padding: 0; }
+            .no-print { display: none !important; }
+            @@page { margin: 10mm; }
+        }
+    </style>
+</head>
+<body>
+<div class="no-print mb-3 text-end">
+    <button onclick="window.print()" class="btn btn-primary">🖨️ Print Invoice</button>
+    <button onclick="window.close()" class="btn btn-outline-secondary ms-2">Close</button>
+</div>
+
+<div style="max-width:800px; margin: 0 auto;">
+    <div class="inv-header">
+        <div class="row align-items-center">
+            <div class="col-7">
+                <h4 class="mb-1 fw-bold">@Model.HotelName</h4>
+                <div class="small opacity-75">@Model.HotelAddress</div>
+                <div class="small opacity-75">📞 @Model.HotelPhone | ✉️ @Model.HotelEmail</div>
+            </div>
+            <div class="col-5 text-end">
+                <div class="fw-bold" style="font-size:26px">INVOICE</div>
+                <div class="opacity-75">@Model.Invoice.InvoiceNumber</div>
+                <div class="mt-1">
+                    @if (Model.Invoice.IsPaid)
+                    { <span class="badge bg-success">PAID</span> }
+                    else
+                    { <span class="badge bg-warning text-dark">UNPAID</span> }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="inv-body">
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="text-muted small text-uppercase fw-bold mb-1">Bill To</div>
+                <div class="fw-bold fs-5">@Model.Guest.FullName</div>
+                <div class="small">@Model.Guest.Email</div>
+                <div class="small">@(Model.Guest.Phone ?? "")</div>
+                <div class="small">@(Model.Guest.Country ?? "")</div>
+            </div>
+            <div class="col-6 text-end">
+                <div class="text-muted small text-uppercase fw-bold mb-1">Invoice Info</div>
+                <div class="small"><strong>Date:</strong> @Model.Invoice.InvoiceDate.ToString("MMMM dd, yyyy")</div>
+                <div class="small"><strong>Due:</strong> @Model.Invoice.DueDate.ToString("MMMM dd, yyyy")</div>
+                <div class="small"><strong>Booking:</strong> @Model.Booking.BookingReference</div>
+                <div class="small"><strong>Guests:</strong> @Model.Booking.NumberOfGuests</div>
+            </div>
+        </div>
+
+        <table class="w-100 mb-4">
+            <thead>
+                <tr>
+                    <th>Description</th><th>Check-in</th><th>Check-out</th>
+                    <th class="text-center">Nights</th><th class="text-end">Rate</th><th class="text-end">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Room @Model.Room.RoomNumber — @Model.Room.RoomType</strong><br />
+                        <small class="text-muted">Floor @Model.Room.Floor</small>
+                    </td>
+                    <td>@Model.Booking.CheckInDate.ToString("MM/dd/yyyy")</td>
+                    <td>@Model.Booking.CheckOutDate.ToString("MM/dd/yyyy")</td>
+                    <td class="text-center">@Model.Booking.NumberOfNights</td>
+                    <td class="text-end">$@Model.Room.PricePerNight.ToString("N2")</td>
+                    <td class="text-end fw-bold">$@Model.Invoice.SubTotal.ToString("N2")</td>
+                </tr>
+                @if (Model.Invoice.ExtraCharges > 0)
+                {
+                    <tr>
+                        <td colspan="5">Extra Charges</td>
+                        <td class="text-end fw-bold">$@Model.Invoice.ExtraCharges.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="row justify-content-end">
+            <div class="col-md-5">
+                <table class="w-100 small">
+                    <tr><td class="py-1 text-muted">Subtotal</td><td class="text-end fw-bold">$@Model.Invoice.SubTotal.ToString("N2")</td></tr>
+                    <tr><td class="py-1 text-muted">Tax (12%)</td><td class="text-end fw-bold">$@Model.Invoice.TaxAmount.ToString("N2")</td></tr>
+                    @if (Model.Invoice.Discount > 0)
+                    {
+                        <tr><td class="py-1 text-success">Discount</td><td class="text-end text-success">-$@Model.Invoice.Discount.ToString("N2")</td></tr>
+                    }
+                    <tr class="total-row">
+                        <td class="py-2 ps-2">Grand Total</td>
+                        <td class="text-end pe-2" style="color:#4f46e5">$@Model.Invoice.GrandTotal.ToString("N2")</td>
+                    </tr>
+                    <tr><td class="py-1 text-muted">Paid</td><td class="text-end text-success">$@Model.Invoice.AmountPaid.ToString("N2")</td></tr>
+                    <tr>
+                        <td class="py-1 fw-bold @(Model.Invoice.BalanceDue > 0 ? "text-danger" : "text-success")">Balance Due</td>
+                        <td class="text-end fw-bold @(Model.Invoice.BalanceDue > 0 ? "text-danger" : "text-success")">$@Model.Invoice.BalanceDue.ToString("N2")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="text-center mt-4 text-muted small">
+            Thank you for staying at @Model.HotelName. We look forward to welcoming you again!
+        </div>
+    </div>
+</div>
+</body>
+</html>

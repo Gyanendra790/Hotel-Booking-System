@@ -1,0 +1,160 @@
+@model BookingCreateViewModel
+@{
+    ViewData["Title"] = "New Booking";
+}
+
+<div class="page-header">
+    <h4><i class="bi bi-plus-circle me-2 text-primary"></i>New Booking</h4>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+</div>
+
+<form asp-action="Create" method="post" novalidate>
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger small py-2 mb-3"></div>
+
+    <div class="row g-3">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+
+            <!-- Guest Section -->
+            <div class="form-section mb-3">
+                <div class="form-section-header"><i class="bi bi-person-circle text-primary"></i> Guest Information</div>
+                <div class="form-section-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Existing Guest</label>
+                        <select asp-for="GuestId" asp-items="@(new SelectList(Model.ExistingGuests, "GuestId", "FullName"))" class="form-select" id="existingGuestSelect">
+                            <option value="">— New Guest —</option>
+                        </select>
+                    </div>
+                    <div id="newGuestFields">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input asp-for="GuestFirstName" class="form-control" placeholder="First name" />
+                                <span asp-validation-for="GuestFirstName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input asp-for="GuestLastName" class="form-control" placeholder="Last name" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input asp-for="GuestEmail" type="email" class="form-control" placeholder="email@example.com" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input asp-for="GuestPhone" class="form-control" placeholder="+1 555 000 0000" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room & Dates -->
+            <div class="form-section mb-3">
+                <div class="form-section-header"><i class="bi bi-door-open text-primary"></i> Room & Dates</div>
+                <div class="form-section-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="CheckInDate" class="form-label">Check-in Date</label>
+                            <input asp-for="CheckInDate" type="date" class="form-control" id="CheckInDate" onchange="calculateFare()" />
+                            <span asp-validation-for="CheckInDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CheckOutDate" class="form-label">Check-out Date</label>
+                            <input asp-for="CheckOutDate" type="date" class="form-control" id="CheckOutDate" onchange="calculateFare()" />
+                            <span asp-validation-for="CheckOutDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="NumberOfGuests" class="form-label">Number of Guests</label>
+                            <input asp-for="NumberOfGuests" type="number" min="1" max="10" class="form-control" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="RoomId" class="form-label">Select Room</label>
+                            <select asp-for="RoomId" class="form-select" id="RoomId" onchange="calculateFare()">
+                                <option value="0">— Select a room —</option>
+                                @foreach (var r in Model.AvailableRooms)
+                                {
+                                    <option value="@r.RoomId" data-price="@r.PricePerNight">
+                                        Room @r.RoomNumber – @r.RoomType – $@r.PricePerNight/night (Max @r.MaxOccupancy guests)
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="RoomId" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Requests -->
+            <div class="form-section mb-3">
+                <div class="form-section-header"><i class="bi bi-chat-text text-primary"></i> Special Requests</div>
+                <div class="form-section-body">
+                    <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="Any special requirements..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Fare Summary -->
+        <div class="col-lg-4">
+            <div class="form-section sticky-top" style="top: 80px;">
+                <div class="form-section-header"><i class="bi bi-calculator text-primary"></i> Fare Summary</div>
+                <div class="form-section-body">
+                    <div id="fareSummary" class="fare-summary" style="display:none">
+                        <div class="fare-row">
+                            <span>Duration</span>
+                            <span id="fareNights" class="fw-600">—</span>
+                        </div>
+                        <div class="fare-row">
+                            <span>Room Fare</span>
+                            <span id="fareRoomFare" class="fw-600">—</span>
+                        </div>
+                        <div class="fare-row">
+                            <span>Tax (12%)</span>
+                            <span id="fareTax" class="fw-600">—</span>
+                        </div>
+                        <div class="fare-row total">
+                            <span>Total</span>
+                            <span id="fareTotal">—</span>
+                        </div>
+                    </div>
+                    <div id="farePrompt" class="text-center text-muted py-3 small">
+                        <i class="bi bi-arrow-up-circle d-block mb-2" style="font-size:28px"></i>
+                        Select a room and dates to see fare breakdown
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-check2-circle me-2"></i> Confirm Booking
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        // Toggle new guest fields
+        document.getElementById('existingGuestSelect').addEventListener('change', function () {
+            document.getElementById('newGuestFields').style.display = this.value ? 'none' : 'block';
+        });
+        if (@(Model.GuestId.HasValue ? "true" : "false")) {
+            document.getElementById('newGuestFields').style.display = 'none';
+        }
+
+        // Override fare display
+        const origCalc = calculateFare;
+        function calculateFare() {
+            const roomId = document.getElementById('RoomId')?.value;
+            if (roomId && roomId !== '0') {
+                document.getElementById('fareSummary').style.display = 'block';
+                document.getElementById('farePrompt').style.display = 'none';
+            }
+            origCalc();
+        }
+    </script>
+}
