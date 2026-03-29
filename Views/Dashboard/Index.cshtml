@@ -55,7 +55,7 @@
             <div class="stat-icon purple"><i class="bi bi-currency-dollar"></i></div>
             <div class="stat-body">
                 <div class="stat-label">Monthly Revenue</div>
-                <div class="stat-value" style="font-size:18px">$@Model.MonthlyRevenue.ToString("N0")</div>
+                <div class="stat-value" style="font-size:18px">₹@Model.MonthlyRevenue.ToString("N0")</div>
             </div>
         </div>
     </div>
@@ -239,7 +239,7 @@
                     <td>@b.Room.RoomNumber (@b.Room.RoomType)</td>
                     <td>@b.CheckInDate.ToString("MM/dd/yyyy")</td>
                     <td>@b.CheckOutDate.ToString("MM/dd/yyyy")</td>
-                    <td class="fw-600">$@b.TotalAmount.ToString("N2")</td>
+                    <td class="fw-600">₹@b.TotalAmount.ToString("N2")</td>
                     <td>
                         <span class="badge-status badge-@b.Status.ToString().ToLower().Replace(" ", "")">
                             @b.Status

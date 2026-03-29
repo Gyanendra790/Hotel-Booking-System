@@ -36,13 +36,13 @@ function calculateFare() {
         .then(r => r.json())
         .then(data => {
             const el = id => document.getElementById(id);
-            if (el('fareNights'))   el('fareNights').textContent   = data.nights + ' night(s)';
-            if (el('fareRoomFare')) el('fareRoomFare').textContent = '$' + data.fare.toFixed(2);
-            if (el('fareTax'))      el('fareTax').textContent      = '$' + data.tax.toFixed(2);
-            if (el('fareTotal'))    el('fareTotal').textContent    = '$' + data.total.toFixed(2);
-            if (el('fareSummary'))  el('fareSummary').style.display = 'block';
+            if (el('fareNights')) el('fareNights').textContent = data.nights + ' night(s)';
+            if (el('fareRoomFare')) el('fareRoomFare').textContent = '₹' + data.fare.toFixed(2);
+            if (el('fareTax')) el('fareTax').textContent = '₹' + data.tax.toFixed(2);
+            if (el('fareTotal')) el('fareTotal').textContent = '₹' + data.total.toFixed(2);
+            if (el('fareSummary')) el('fareSummary').style.display = 'block';
         })
-        .catch(() => {});
+        .catch(() => { });
 }
 
 // Confirm delete dialogs

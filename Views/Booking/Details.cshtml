@@ -114,18 +114,18 @@
             <div class="form-section-header"><i class="bi bi-receipt text-primary"></i> Fare Breakdown</div>
             <div class="form-section-body">
                 <div class="fare-summary">
-                    <div class="fare-row"><span>Room Fare</span><span class="fw-600">$@Model.RoomFare.ToString("N2")</span></div>
-                    <div class="fare-row"><span>Tax</span><span class="fw-600">$@Model.TaxAmount.ToString("N2")</span></div>
+                    <div class="fare-row"><span>Room Fare</span><span class="fw-600">₹@Model.RoomFare.ToString("N2")</span></div>
+                    <div class="fare-row"><span>Tax</span><span class="fw-600">₹@Model.TaxAmount.ToString("N2")</span></div>
                     @if (Model.ExtraCharges > 0)
                     {
-                        <div class="fare-row"><span>Extra Charges</span><span class="fw-600">$@Model.ExtraCharges.ToString("N2")</span></div>
+                        <div class="fare-row"><span>Extra Charges</span><span class="fw-600">₹@Model.ExtraCharges.ToString("N2")</span></div>
                     }
                     @if (Model.Discount > 0)
                     {
-                        <div class="fare-row text-success"><span>Discount</span><span class="fw-600">-$@Model.Discount.ToString("N2")</span></div>
+                        <div class="fare-row text-success"><span>Discount</span><span class="fw-600">-₹@Model.Discount.ToString("N2")</span></div>
                     }
-                    <div class="fare-row total"><span>Total</span><span>$@Model.TotalAmount.ToString("N2")</span></div>
-                    <div class="fare-row"><span>Amount Paid</span><span class="fw-600 text-success">$@Model.AmountPaid.ToString("N2")</span></div>
+                    <div class="fare-row total"><span>Total</span><span>₹@Model.TotalAmount.ToString("N2")</span></div>
+                    <div class="fare-row"><span>Amount Paid</span><span class="fw-600 text-success">₹@Model.AmountPaid.ToString("N2")</span></div>
                 </div>
             </div>
         </div>

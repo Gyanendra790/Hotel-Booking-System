@@ -47,7 +47,7 @@
                     <span class="room-amenity"><i class="bi bi-people"></i>Max @room.MaxOccupancy</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div class="room-price">$@room.PricePerNight.ToString("N0") <span>/ night</span></div>
+                    <div class="room-price">₹@room.PricePerNight.ToString("N0") <span>/ night</span></div>
                     <div class="d-flex gap-1">
                         @if (room.Status == RoomStatus.Available)
                         {

@@ -98,14 +98,14 @@
                     <td>@Model.Booking.CheckInDate.ToString("MM/dd/yyyy")</td>
                     <td>@Model.Booking.CheckOutDate.ToString("MM/dd/yyyy")</td>
                     <td class="text-center">@Model.Booking.NumberOfNights</td>
-                    <td class="text-end">$@Model.Room.PricePerNight.ToString("N2")</td>
-                    <td class="text-end fw-600">$@Model.Invoice.SubTotal.ToString("N2")</td>
+                    <td class="text-end">₹@Model.Room.PricePerNight.ToString("N2")</td>
+                    <td class="text-end fw-600">₹@Model.Invoice.SubTotal.ToString("N2")</td>
                 </tr>
                 @if (Model.Invoice.ExtraCharges > 0)
                 {
                     <tr>
                         <td colspan="5">Extra Charges</td>
-                        <td class="text-end fw-600">$@Model.Invoice.ExtraCharges.ToString("N2")</td>
+                        <td class="text-end fw-600">₹@Model.Invoice.ExtraCharges.ToString("N2")</td>
                     </tr>
                 }
             </tbody>
@@ -117,30 +117,30 @@
                 <table class="w-100 small">
                     <tr class="border-bottom">
                         <td class="py-2 text-muted">Subtotal</td>
-                        <td class="text-end fw-600">$@Model.Invoice.SubTotal.ToString("N2")</td>
+                        <td class="text-end fw-600">₹@Model.Invoice.SubTotal.ToString("N2")</td>
                     </tr>
                     <tr class="border-bottom">
                         <td class="py-2 text-muted">Tax (12%)</td>
-                        <td class="text-end fw-600">$@Model.Invoice.TaxAmount.ToString("N2")</td>
+                        <td class="text-end fw-600">₹@Model.Invoice.TaxAmount.ToString("N2")</td>
                     </tr>
                     @if (Model.Invoice.Discount > 0)
                     {
                         <tr class="border-bottom">
                             <td class="py-2 text-success">Discount</td>
-                            <td class="text-end fw-600 text-success">-$@Model.Invoice.Discount.ToString("N2")</td>
+                            <td class="text-end fw-600 text-success">-₹@Model.Invoice.Discount.ToString("N2")</td>
                         </tr>
                     }
                     <tr class="border-bottom">
                         <td class="py-3 fw-800 fs-6">Grand Total</td>
-                        <td class="text-end fw-800 fs-6 text-primary">$@Model.Invoice.GrandTotal.ToString("N2")</td>
+                        <td class="text-end fw-800 fs-6 text-primary">₹@Model.Invoice.GrandTotal.ToString("N2")</td>
                     </tr>
                     <tr class="border-bottom">
                         <td class="py-2 text-muted">Amount Paid</td>
-                        <td class="text-end fw-600 text-success">$@Model.Invoice.AmountPaid.ToString("N2")</td>
+                        <td class="text-end fw-600 text-success">₹@Model.Invoice.AmountPaid.ToString("N2")</td>
                     </tr>
                     <tr>
                         <td class="py-2 fw-700 @(Model.Invoice.BalanceDue > 0 ? "text-danger" : "text-success")">Balance Due</td>
-                        <td class="text-end fw-800 @(Model.Invoice.BalanceDue > 0 ? "text-danger" : "text-success")">$@Model.Invoice.BalanceDue.ToString("N2")</td>
+                        <td class="text-end fw-800 @(Model.Invoice.BalanceDue > 0 ? "text-danger" : "text-success")">₹@Model.Invoice.BalanceDue.ToString("N2")</td>
                     </tr>
                 </table>
             </div>

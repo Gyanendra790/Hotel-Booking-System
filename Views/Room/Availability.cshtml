@@ -87,9 +87,9 @@
                                 decimal total = room.PricePerNight * nights;
                             }
                             <div class="fare-summary mt-2 mb-2">
-                                <div class="fare-row"><span>@nights night(s) × $@room.PricePerNight</span><span class="fw-600">$@total.ToString("N2")</span></div>
+                                <div class="fare-row"><span>@nights night(s) × ₹@room.PricePerNight</span><span class="fw-600">₹@total.ToString("N2")</span></div>
                             </div>
-                            <div class="room-price mb-2">$@room.PricePerNight.ToString("N0") <span>/ night</span></div>
+                            <div class="room-price mb-2">₹@room.PricePerNight.ToString("N0") <span>/ night</span></div>
                             <a asp-controller="Booking" asp-action="Create"
                                asp-route-roomId="@room.RoomId"
                                class="btn btn-success w-100">

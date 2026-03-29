@@ -61,7 +61,7 @@
                             <td>@b.Room.RoomNumber (@b.Room.RoomType)</td>
                             <td>@b.CheckInDate.ToString("MM/dd/yy")</td>
                             <td>@b.CheckOutDate.ToString("MM/dd/yy")</td>
-                            <td class="fw-600">$@b.TotalAmount.ToString("N2")</td>
+                            <td class="fw-600">₹@b.TotalAmount.ToString("N2")</td>
                             <td><span class="badge-status badge-@b.Status.ToString().ToLower()">@b.Status</span></td>
                             <td>
                                 <a asp-controller="Booking" asp-action="Details" asp-route-id="@b.BookingId"

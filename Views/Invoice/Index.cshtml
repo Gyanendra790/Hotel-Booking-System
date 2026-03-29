@@ -25,9 +25,9 @@
                     <td class="fw-600">@inv.Booking.Guest.FullName</td>
                     <td>@inv.Booking.Room.RoomNumber</td>
                     <td class="small">@inv.InvoiceDate.ToString("MM/dd/yyyy")</td>
-                    <td class="fw-700">$@inv.GrandTotal.ToString("N2")</td>
+                    <td class="fw-700">₹@inv.GrandTotal.ToString("N2")</td>
                     <td class="@(inv.BalanceDue > 0 ? "text-danger fw-600" : "text-success fw-600")">
-                        $@inv.BalanceDue.ToString("N2")
+                        ₹@inv.BalanceDue.ToString("N2")
                     </td>
                     <td>
                         @if (inv.IsPaid)

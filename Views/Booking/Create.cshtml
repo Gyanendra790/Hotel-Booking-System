@@ -76,7 +76,7 @@
                                 @foreach (var r in Model.AvailableRooms)
                                 {
                                     <option value="@r.RoomId" data-price="@r.PricePerNight">
-                                        Room @r.RoomNumber – @r.RoomType – $@r.PricePerNight/night (Max @r.MaxOccupancy guests)
+                                        Room @r.RoomNumber – @r.RoomType – ₹@r.PricePerNight/night (Max @r.MaxOccupancy guests)
                                     </option>
                                 }
                             </select>
