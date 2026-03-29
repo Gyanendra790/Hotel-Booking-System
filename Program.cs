@@ -8,11 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 
-// SQL Server (commented for now — uncomment later)
+// ❌ SQL Server (commented for now — uncomment later)
 // builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// In-Memory Database (for now)
+// ✅ In-Memory Database (for now)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("HotelBookingDB"));
 
@@ -68,7 +68,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
 
-        // Not supported in InMemory (keep for SQL Server later)
+        // ❌ Not supported in InMemory (keep for SQL Server later)
         // context.Database.Migrate();
 
         await DbInitializer.SeedAsync(services);
